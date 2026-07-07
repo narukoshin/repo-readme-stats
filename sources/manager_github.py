@@ -32,9 +32,12 @@ class GitHubManager:
     _END_COMMENT = f"<!--END_SECTION:{EM.SECTION_NAME}-->"
     _README_REGEX = f"{_START_COMMENT}[\\s\\S]+{_END_COMMENT}"
 
+    _AUTH_USER = None
+
     @staticmethod
     def prepare_github_env():
         github = Github(auth=Auth.Token(EM.GH_TOKEN))
+        GitHubManager._AUTH_USER = github.get_user()
         clone_path = "repo"
 
         GitHubManager._REMOTE_NAME = f"{EM.REPO_OWNER}/{EM.REPO_NAME}"
@@ -58,11 +61,12 @@ class GitHubManager:
 
     @staticmethod
     def _get_author() -> Actor:
-        if EM.COMMIT_BY_ME:
-            user = GitHubManager.REMOTE.owner if GitHubManager.REMOTE else None
+        user = GitHubManager._AUTH_USER
+        if EM.COMMIT_BY_ME and user:
+            fallback_email = f"{user.id}+{user.login}@users.noreply.github.com"
             return Actor(
-                EM.COMMIT_USERNAME or (user.login if user else "readme-bot"),
-                EM.COMMIT_EMAIL or "41898282+github-actions[bot]@users.noreply.github.com",
+                EM.COMMIT_USERNAME or user.login,
+                EM.COMMIT_EMAIL or user.email or fallback_email,
             )
         else:
             return Actor(
