@@ -1,0 +1,145 @@
+name: 'Repo Readme Stats'
+author: AIRI
+description: 'Dynamically generated repo stats for your README — stars, forks, languages, commits, contributors, releases, and more.'
+
+inputs:
+  GH_TOKEN:
+    description: 'GitHub access token with Repo scope'
+    required: true
+    default: ${{ github.token }}
+
+  REPO_OWNER:
+    description: 'Repository owner (user or org)'
+    required: true
+
+  REPO_NAME:
+    description: 'Repository name'
+    required: true
+
+  SECTION_NAME:
+    description: 'Name used in readme to scope the updated section'
+    required: false
+    default: "repo_stats"
+
+  PULL_BRANCH_NAME:
+    required: false
+    description: "The branch to get the readme from"
+    default: ""
+
+  PUSH_BRANCH_NAME:
+    required: false
+    description: "The branch to update the readme in"
+    default: ""
+
+  SHOW_STARS:
+    required: false
+    description: 'Show star count and growth'
+    default: "True"
+
+  SHOW_FORKS:
+    required: false
+    description: 'Show fork count'
+    default: "True"
+
+  SHOW_LANGUAGES:
+    required: false
+    description: "Show language breakdown of the repo"
+    default: "True"
+
+  SHOW_COMMITS:
+    required: false
+    description: "Show recent commit activity"
+    default: "True"
+
+  SHOW_CONTRIBUTORS:
+    required: false
+    description: "Show top contributors"
+    default: "True"
+
+  SHOW_RELEASES:
+    required: false
+    description: "Show latest release info"
+    default: "True"
+
+  SHOW_ISSUES:
+    required: false
+    description: "Show open/closed issue counts"
+    default: "True"
+
+  SHOW_PRS:
+    required: false
+    description: "Show open/merged PR counts"
+    default: "True"
+
+  SHOW_CLONES:
+    required: false
+    description: "Show repo clone traffic (requires push access)"
+    default: "False"
+
+  SHOW_TOPICS:
+    required: false
+    description: "Show repo topics"
+    default: "False"
+
+  COMMIT_BY_ME:
+    required: false
+    description: "Git commit with your own name and email"
+    default: "False"
+  
+  COMMIT_MESSAGE:
+    required: false
+    description: "Git commit message"
+    default: "Updated with Repo Stats"
+
+  COMMIT_USERNAME:
+    required: false
+    description: "Git commit custom username"
+    default: ""
+  
+  COMMIT_EMAIL:
+    required: false
+    description: "Git commit custom email"
+    default: ""
+
+  COMMIT_SINGLE:
+    required: false
+    description: "Erase commit history on each commit"
+    default: "False"
+
+  LOCALE:
+    required: false
+    description: "Show stats in your own language"
+    default: "en"
+
+  UPDATED_DATE_FORMAT:
+    required: false
+    description: "Updated date format"
+    default: "%d/%m/%Y %H:%M:%S"
+
+  SYMBOL_VERSION:
+    required: false
+    description: "Version of the symbol block and empty of the progress bar"
+    default: "1"
+
+  BADGE_STYLE:
+    required: false
+    description: "Style for the badge maker (flat, flat-square, plastic, for-the-badge, social)"
+    default: "flat"
+
+  FORCE_ADD:
+    required: false
+    description: "Whether to override repository .gitignore file while committing the assets"
+    default: "False"
+
+  DEBUG_LOGGING:
+    required: false
+    description: "Whether to enable action debug logging"
+    default: ${{ runner.debug }}
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+branding:
+  icon: 'bar-chart'
+  color: 'green'

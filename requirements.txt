@@ -1,0 +1,5 @@
+PyGithub==2.8.1
+GitPython~=3.1
+pytz~=2022.7
+humanize~=4.15
+httpx~=0.27
