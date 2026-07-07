@@ -37,7 +37,16 @@ class GitHubManager:
     @staticmethod
     def prepare_github_env():
         github = Github(auth=Auth.Token(EM.GH_TOKEN))
-        GitHubManager._AUTH_USER = github.get_user()
+        try:
+            GitHubManager._AUTH_USER = github.get_user()
+            DBM.i(f"Authenticated as: {GitHubManager._AUTH_USER.login}")
+            if GitHubManager._AUTH_USER.email:
+                DBM.i(f"User email: {GitHubManager._AUTH_USER.email}")
+            else:
+                DBM.i("User has no public email, will use noreply fallback")
+        except Exception as e:
+            DBM.w(f"Could not fetch authenticated user: {e}")
+            GitHubManager._AUTH_USER = None
         clone_path = "repo"
 
         GitHubManager._REMOTE_NAME = f"{EM.REPO_OWNER}/{EM.REPO_NAME}"
@@ -64,15 +73,20 @@ class GitHubManager:
         user = GitHubManager._AUTH_USER
         if EM.COMMIT_BY_ME and user:
             fallback_email = f"{user.id}+{user.login}@users.noreply.github.com"
-            return Actor(
+            author = Actor(
                 EM.COMMIT_USERNAME or user.login,
                 EM.COMMIT_EMAIL or user.email or fallback_email,
             )
+            DBM.i(f"Commit author: {author.name} <{author.email}>")
+            return author
         else:
-            return Actor(
+            DBM.i(f"Using default identity (COMMIT_BY_ME={EM.COMMIT_BY_ME}, user={'set' if user else 'None'})")
+            author = Actor(
                 EM.COMMIT_USERNAME or "readme-bot",
                 EM.COMMIT_EMAIL or "41898282+github-actions[bot]@users.noreply.github.com",
             )
+            DBM.i(f"Commit author: {author.name} <{author.email}>")
+            return author
 
     @staticmethod
     def branch(requested_branch: str) -> str:
